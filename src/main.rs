@@ -1,8 +1,10 @@
 mod balances;
+mod system;
 
 fn main() {
     println!("Hello, world!");
     let mut pallet = balances::Pallet::new();
+    let mut system = system::Pallet::new();
 }
 
 #[test]
