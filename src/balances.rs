@@ -2,19 +2,17 @@ use std::collections::BTreeMap;
 
 use num::{CheckedAdd, CheckedSub, Zero};
 
-type AccountId = String;
-type Balance = u128;
-
-#[derive(Debug)]
-pub struct Pallet<AccountId, Balance> {
-    balances: BTreeMap<AccountId, Balance>,
+pub trait Config {
+    type AccountId = Ord + Clone;
+    type Balance = Zero + CheckedSub + CheckedAdd + Copy;
 }
 
-impl<AccountId, Balance> Pallet<AccountId, Balance>
-where
-    AccountId: Ord + Clone,
-    Balance: Zero + CheckedSub + CheckedAdd + Copy,
-{
+#[derive(Debug)]
+pub struct Pallet<T: Config> {
+    balances: BTreeMap<T::AccountId, T::Balance>,
+}
+
+impl<T: Config> Pallet<T> {
     pub fn new() -> Self {
         Self {
             balances: BTreeMap::new(),
@@ -22,14 +20,14 @@ where
     }
 
     ///set the balance of an account 'who' to some 'amount'
-    pub fn set_balance(&mut self, who: &AccountId, amount: Balance) {
+    pub fn set_balance(&mut self, who: &T::AccountId, amount: T::Balance) {
         //Insert the amount into the BTreemap under 'who'
         self.balances.insert(who.clone(), amount);
     }
 
     ///Get the balance of an account 'who'
     /// if the account has no stored balance, we return zero.
-    pub fn balance(&mut self, who: &AccountId) -> Balance {
+    pub fn balance(&mut self, who: &T::AccountId) -> T::Balance {
         *self.balances.get(who).unwrap_or(&Balance::zero())
     }
 
@@ -37,9 +35,9 @@ where
     /// this function verifies that 'from' account has at least 'amount' balance to transfer and nomathematical overflows occu
     pub fn transfer(
         &mut self,
-        caller: AccountId,
-        to: AccountId,
-        amount: Balance,
+        caller: T::AccountId,
+        to: T::AccountId,
+        amount: T::Balance,
     ) -> Result<(), &'static str> {
         let caller_balance = self.balance(&caller);
         let to_balance = self.balance(&to);

@@ -4,12 +4,20 @@ mod system;
 mod types {
     pub type AccountId = String;
     pub type Balance = u128;
+    pub type BlockNumber = u32;
+    pub type Nonce = u32;
+}
+
+impl system::Config for Runtime {
+    type AccountId = types::AccountId;
+    type BlockNumber = types::BlockNumber;
+    type Nonce = types::Nonce;
 }
 
 #[derive(Debug)]
 pub struct Runtime {
     //create a field system and balance
-    system: system::Pallet,
+    system: system::Pallet<Runtime>,
     balances: balances::Pallet<types::AccountId, types::Balance>,
 }
 
