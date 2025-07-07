@@ -39,12 +39,12 @@ impl<T: Config> Pallet<T> {
 
     //increment the nounce of an account
     pub fn inc_nounce(&mut self, who: &T::AccountId) {
-        let nonce = self.nonce.get(who).unwrap_or(&Zero);
-        self.nonce.insert(who.clone(), nonce + One);
+        let nonce = self.nonce.get(who).unwrap_or(&T::Nonce::zero());
+        self.nonce.insert(who.clone(), nonce + T::Nonce::one());
     }
 
     pub fn get_nonce(&self, who: &T::AccountId) -> T::Nonce {
-        *self.nonce.get(who).unwrap_or(&Zero)
+        *self.nonce.get(who).unwrap_or(&T::Nonce::zero)
     }
 }
 
@@ -64,14 +64,14 @@ mod test {
     #[test]
     fn init_system() {
         let system: super::Pallet<TestConfig> = super::Pallet::new();
-        assert_eq!(system.block_number(), Zero);
+        assert_eq!(system.block_number(), 0);
     }
 
     #[test]
     fn inc_block_number() {
         let mut system: super::Pallet<TestConfig> = super::Pallet::new();
         system.increment_block_number();
-        assert_eq!(system.block_number(), One);
+        assert_eq!(system.block_number(), 1);
     }
 
     #[test]

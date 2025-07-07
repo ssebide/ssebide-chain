@@ -14,11 +14,15 @@ impl system::Config for Runtime {
     type Nonce = types::Nonce;
 }
 
+impl balances::Config for Runtime {
+    type Balance = types::Balance;
+}
+
 #[derive(Debug)]
 pub struct Runtime {
     //create a field system and balance
     system: system::Pallet<Runtime>,
-    balances: balances::Pallet<types::AccountId, types::Balance>,
+    balances: balances::Pallet<Runtime>,
 }
 
 impl Runtime {
